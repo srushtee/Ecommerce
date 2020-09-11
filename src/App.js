@@ -7,7 +7,7 @@ import {Switch, Route } from "react-router-dom";
 import Shop from './Pages/ShopPage/Shop'
 import HeaderComponent from './Components/HeaderComponent/HeaderComponent'
 import SignInAndSignUp from './Pages/SignInAndSignUp/SignInAndSignUp'
-import { auth } from './Firebase/firebase.utils'
+import { auth, createUserProfileDocument } from './Firebase/firebase.utils'
 
 const App = () => {
 
@@ -16,16 +16,28 @@ const App = () => {
   const unsubscribeFromAuth = () => {};
 
   React.useEffect(() => {
-    auth.onAuthStateChanged(user => {
-      setCurrentUser(user)
-      console.log(user);
+    auth.onAuthStateChanged(async userAuth => {
+      if(userAuth){
+        const userRef = await createUserProfileDocument(userAuth)
+        userRef.onSnapshot(snapShot => {
+          setCurrentUser({
+            id: snapShot.id,
+            ...snapShot.data()
+          })
+        })
+      }
+      else{
+        setCurrentUser(userAuth)
+      }
+     
+      
     })
-   } )
+   },[] )
 
    React.useEffect(() => {
     unsubscribeFromAuth();
-   } )
-
+   },[] )
+   
 
   return (
     <div className="App">
