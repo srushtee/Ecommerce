@@ -2,7 +2,7 @@ import React from 'react'
 import FormInput from '../FormInput/FormInput'
 import './signIn.scss'
 import CustomButton from '../CustomButton/CustomButton'
-import { signInWithGoogle } from '../../Firebase/firebase.utils'
+import {auth, signInWithGoogle } from '../../Firebase/firebase.utils'
 
 const SignIn = () => {
 
@@ -17,10 +17,20 @@ const SignIn = () => {
         setPassword(e.target.value)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setEmail('')
-        setPassword('')
+
+        try{
+
+            await auth.signInWithEmailAndPassword(email, password)
+            setEmail('')
+             setPassword('')
+        }
+        catch(err){
+            console.log(err);
+        }
+
+        
     }
 
     return (
